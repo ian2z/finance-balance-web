@@ -27,7 +27,7 @@ export default function DonutChart({
   total = 0,
   onSelectCategory,
 }) {
-  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
 
   if (!categories || categories.length === 0) return null;
 
@@ -40,10 +40,10 @@ export default function DonutChart({
   const circumference = 2 * Math.PI * radius;
 
   const slices = computeSlices(categories, totalCalculated, circumference);
-  const activeItem = hoveredCategory || slices[0];
+  const activeItem = slices.find((s) => s.id === hoveredId) || slices[0];
 
   const handleSelect = (slice) => {
-    setHoveredCategory(slice);
+    setHoveredId(slice.id);
     if (onSelectCategory) {
       onSelectCategory(slice);
     }
@@ -116,7 +116,7 @@ export default function DonutChart({
               key={slice.id}
               type="button"
               onClick={() => handleSelect(slice)}
-              onMouseEnter={() => setHoveredCategory(slice)}
+              onMouseEnter={() => setHoveredId(slice.id)}
               className={`flex items-center justify-between p-2 rounded-lg border text-left transition-all cursor-pointer ${
                 isSelected
                   ? "bg-[#27272a] border-[#f97316]/50 shadow-sm"
