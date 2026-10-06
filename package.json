@@ -1,0 +1,11 @@
+{
+  "name": "finance-balance-web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix mvp-mobile run dev",
+    "build": "npm --prefix mvp-mobile run build",
+    "lint": "npm --prefix mvp-mobile run lint",
+    "preview": "npm --prefix mvp-mobile run preview"
+  }
+}

@@ -1,0 +1,42 @@
+# Requisitos e especificações base locais
+DESIGN.md
+requisitos_mvp_finance_balance.md
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Diagnostic / Environment
+.oxlintrc.json
+
+# Dependencies
+node_modules
+**/node_modules/
+
+# Production Build
+dist
+dist-ssr
+**/dist/
+**/dist-ssr/
+
+# Local Environment & Secrets
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
