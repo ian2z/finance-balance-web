@@ -1,86 +1,61 @@
-import {
-  Utensils,
-  Fuel,
-  Music,
-  ArrowDownLeft,
-  Pill,
-  ShoppingBag,
-  Sparkles,
-  Building,
-} from "lucide-react";
-import { formatCurrency } from "../utils/formatters";
+import { Pencil } from "lucide-react";
+import { formatCurrency, formatTransactionDate } from "../utils/formatters";
+import GroupIcon from "./GroupIcon";
 
-const getCategoryIcon = (category) => {
-  switch (category?.toLowerCase()) {
-    case "alimentação":
-      return <Utensils className="w-4 h-4 text-[#f97316]" />;
-    case "transporte":
-      return <Fuel className="w-4 h-4 text-[#f59e0b]" />;
-    case "assinaturas":
-      return <Music className="w-4 h-4 text-[#fb923c]" />;
-    case "renda":
-      return <ArrowDownLeft className="w-4 h-4 text-[#22c55e]" />;
-    case "saúde":
-      return <Pill className="w-4 h-4 text-[#38bdf8]" />;
-    case "lazer & cultura":
-      return <Sparkles className="w-4 h-4 text-[#a855f7]" />;
-    case "moradia & contas":
-      return <Building className="w-4 h-4 text-[#eab308]" />;
-    default:
-      return <ShoppingBag className="w-4 h-4 text-[#a1a1aa]" />;
-  }
+const methodStyle = {
+  Crédito: "text-[#f59e0b] border-[#f59e0b]/30",
+  Pix: "text-[#22c55e] border-[#22c55e]/30",
+  Boleto: "text-[#38bdf8] border-[#38bdf8]/30",
+  Dinheiro: "text-[#d1c79e] border-[#d1c79e]/30",
 };
 
-export default function TransactionItem({ transaction, onClick }) {
-  const isIncome = transaction.amount > 0;
-  const formattedAmount = formatCurrency(Math.abs(transaction.amount));
-
-  return (
-    <div
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && onClick) onClick();
-      }}
-      className="flex items-center justify-between p-3.5 rounded-xl bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] hover:bg-[#201f23] transition-all cursor-pointer group"
-    >
+// `path` descreve onde o lançamento está na árvore: Grupo › Item › Subitem.
+export default function TransactionItem({ transaction, path, group, color, onClick }) {
+  const content = (
+    <>
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-10 h-10 rounded-lg bg-[#27272a] border border-[#3f3f46] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-          {getCategoryIcon(transaction.category)}
+          <GroupIcon name={group?.icon} color={color} />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#fafafa] truncate">
-            {transaction.title}
-          </p>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-[#a1a1aa]">
-            <span>{transaction.dateFormatted}</span>
+          <p className="text-sm font-semibold text-[#fafafa] truncate">{transaction.description}</p>
+          <div className="flex items-center gap-2 mt-0.5 text-xs text-[#a1a1aa] min-w-0">
+            <span className="shrink-0">{formatTransactionDate(transaction.date)}</span>
             <span>•</span>
-            <span className="truncate">{transaction.category}</span>
+            <span className="truncate">{path}</span>
           </div>
         </div>
       </div>
 
-      <div className="text-right shrink-0 ml-3">
-        <p
-          className={`text-sm font-bold ${
-            isIncome ? "text-[#22c55e]" : "text-[#fafafa]"
-          }`}
-        >
-          {isIncome ? `+${formattedAmount}` : `-${formattedAmount}`}
-        </p>
-        <span
-          className={`inline-block px-2 py-0.5 mt-1 text-[10px] font-semibold rounded-full uppercase tracking-wider ${
-            transaction.type === "Crédito"
-              ? "bg-[#27272a] text-[#f59e0b] border border-[#f59e0b]/30"
-              : transaction.type === "Pix"
-              ? "bg-[#27272a] text-[#22c55e] border border-[#22c55e]/30"
-              : "bg-[#27272a] text-[#f97316] border border-[#f97316]/30"
-          }`}
-        >
-          {transaction.type}
-        </span>
+      <div className="text-right shrink-0 ml-3 flex items-center gap-2">
+        <div>
+          <p className="text-sm font-bold text-[#fafafa]">-{formatCurrency(transaction.amount)}</p>
+          <span
+            className={`inline-block px-2 py-0.5 mt-1 text-[10px] font-semibold rounded-full uppercase tracking-wider bg-[#27272a] border ${
+              methodStyle[transaction.method] || "text-[#f97316] border-[#f97316]/30"
+            }`}
+          >
+            {transaction.method}
+          </span>
+        </div>
+        {onClick && <Pencil className="w-3.5 h-3.5 text-[#71717a] group-hover:text-[#f97316] transition-colors" />}
       </div>
-    </div>
+    </>
+  );
+
+  const className =
+    "w-full flex items-center justify-between p-3.5 rounded-xl bg-[#18181b] border border-[#27272a] text-left transition-all group";
+
+  if (!onClick) return <div className={className}>{content}</div>;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Editar lançamento ${transaction.description}`}
+      className={`${className} hover:border-[#3f3f46] hover:bg-[#201f23] cursor-pointer`}
+    >
+      {content}
+    </button>
   );
 }

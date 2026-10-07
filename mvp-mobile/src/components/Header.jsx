@@ -1,138 +1,92 @@
 import { useState } from "react";
-import { Bell, X, Check, ArrowLeft, User } from "lucide-react";
+import { Bell, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
+import Modal from "./Modal";
 
-export default function Header({
-  user,
-  title,
-  subtitle,
-  showBack = false,
-  onBack,
-  onOpenNotifications,
-}) {
-  const [showNotificationList, setShowNotificationList] = useState(false);
-  const [notifications, setNotifications] = useState(user?.notifications || []);
+const initialsOf = (name = "") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0].toUpperCase())
+    .join("");
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+export default function Header({ account, title, subtitle, alerts = [], onOpenProfile }) {
+  const [showAlerts, setShowAlerts] = useState(false);
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#121214]/90 backdrop-blur-md px-4 py-3.5 border-b border-[#27272a] flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          {showBack ? (
+      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 bg-[#121214]/90 backdrop-blur-md border-b border-[#27272a]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button
               type="button"
-              onClick={onBack}
-              className="w-9 h-9 rounded-lg bg-[#18181b] border border-[#27272a] flex items-center justify-center text-[#fafafa] hover:border-[#3f3f46] transition-colors"
+              onClick={onOpenProfile}
+              aria-label="Abrir perfil"
+              className="lg:hidden relative w-10 h-10 rounded-full bg-[#27272a] border border-[#3f3f46] flex items-center justify-center text-sm font-bold text-[#fafafa] shrink-0 cursor-pointer hover:border-[#f97316]/60 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          ) : (
-            <div className="relative w-10 h-10 rounded-full bg-[#27272a] border border-[#3f3f46] flex items-center justify-center text-[#fafafa] shrink-0">
-              <User className="w-5 h-5 text-[#fafafa]" />
+              {initialsOf(account?.name)}
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#22c55e] rounded-full border-2 border-[#121214]" />
+            </button>
+
+            <div className="min-w-0">
+              {subtitle && (
+                <span className="text-[11px] font-medium text-[#a1a1aa] block leading-tight truncate">{subtitle}</span>
+              )}
+              <h1 className="text-base lg:text-lg font-bold text-[#fafafa] truncate leading-tight">{title}</h1>
             </div>
-          )}
-
-          <div className="min-w-0">
-            {subtitle && (
-              <span className="text-[11px] font-medium text-[#a1a1aa] block leading-tight">
-                {subtitle}
-              </span>
-            )}
-            <h1 className="text-base font-bold text-[#fafafa] truncate leading-tight">
-              {title || `Olá, ${user?.shortName || "Ian"}`}
-            </h1>
           </div>
-        </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => {
-              setShowNotificationList(true);
-              if (onOpenNotifications) onOpenNotifications();
-            }}
-            className="relative w-9 h-9 rounded-lg bg-[#18181b] border border-[#27272a] flex items-center justify-center text-[#fafafa] hover:border-[#3f3f46] transition-colors"
-            aria-label="Notificações"
+            onClick={() => setShowAlerts(true)}
+            className="relative w-9 h-9 rounded-lg bg-[#18181b] border border-[#27272a] flex items-center justify-center text-[#fafafa] hover:border-[#3f3f46] transition-colors cursor-pointer shrink-0"
+            aria-label={`Alertas do orçamento (${alerts.length})`}
           >
             <Bell className="w-4 h-4 text-[#fafafa]" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#f97316] text-[#121214] text-[10px] font-bold rounded-full flex items-center justify-center">
-                {unreadCount}
+            {alerts.length > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#f97316] text-[#121214] text-[10px] font-bold rounded-full flex items-center justify-center">
+                {alerts.length}
               </span>
             )}
           </button>
         </div>
       </header>
 
-      {/* Notifications Drawer / Modal */}
-      {showNotificationList && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-center items-end sm:items-center p-0 sm:p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-[#18181b] border border-[#27272a] rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-[#27272a] flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-[#fafafa]">Notificações</h3>
-                <p className="text-xs text-[#a1a1aa] mt-0.5">
-                  {unreadCount > 0
-                    ? `${unreadCount} nova(s) atualização(ões)`
-                    : "Tudo em dia!"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={markAllAsRead}
-                    className="text-xs text-[#f97316] hover:underline flex items-center gap-1 font-medium"
-                  >
-                    <Check className="w-3.5 h-3.5" /> Ler todas
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setShowNotificationList(false)}
-                  className="w-8 h-8 rounded-lg bg-[#27272a] border border-[#3f3f46] flex items-center justify-center text-[#a1a1aa] hover:text-[#fafafa]"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+      {showAlerts && (
+        <Modal
+          title="Alertas do Orçamento"
+          subtitle={alerts.length > 0 ? `${alerts.length} ponto(s) de atenção no período` : "Tudo em dia!"}
+          icon={<Bell className="w-5 h-5 text-[#f97316]" />}
+          onClose={() => setShowAlerts(false)}
+        >
+          {alerts.length === 0 ? (
+            <div className="flex flex-col items-center text-center py-6">
+              <CheckCircle2 className="w-10 h-10 text-[#22c55e] mb-2" />
+              <p className="text-sm text-[#a1a1aa]">Nenhum desvio entre previsto e realizado neste período.</p>
             </div>
-
-            <div className="p-4 overflow-y-auto space-y-2.5 divide-y divide-[#27272a]/50">
-              {notifications.map((n) => (
+          ) : (
+            <div className="space-y-2.5">
+              {alerts.map((a) => (
                 <div
-                  key={n.id}
-                  className={`pt-2.5 first:pt-0 ${
-                    !n.read ? "bg-[#27272a]/30 p-3 rounded-lg border border-[#f97316]/20" : ""
+                  key={a.id}
+                  className={`p-3 rounded-lg border bg-[#27272a]/30 ${
+                    a.tone === "danger" ? "border-[#ef4444]/30" : "border-[#f59e0b]/30"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-[#fafafa]">{n.title}</h4>
-                    <span className="text-[10px] text-[#a1a1aa] shrink-0">{n.time}</span>
+                  <div className="flex items-center gap-2">
+                    {a.tone === "danger" ? (
+                      <AlertCircle className="w-4 h-4 text-[#ef4444] shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-[#f59e0b] shrink-0" />
+                    )}
+                    <h4 className="text-sm font-semibold text-[#fafafa]">{a.title}</h4>
                   </div>
-                  <p className="text-xs text-[#a1a1aa] mt-1 leading-relaxed">
-                    {n.description}
-                  </p>
+                  <p className="text-xs text-[#a1a1aa] mt-1 leading-relaxed">{a.description}</p>
                 </div>
               ))}
             </div>
-
-            <div className="p-3 border-t border-[#27272a] bg-[#121214] text-center">
-              <button
-                type="button"
-                onClick={() => setShowNotificationList(false)}
-                className="w-full py-2 bg-[#27272a] text-[#fafafa] rounded-lg text-xs font-semibold hover:bg-[#3f3f46] transition-colors"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
+          )}
+        </Modal>
       )}
     </>
   );

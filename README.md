@@ -12,26 +12,20 @@ Protótipo navegável do aplicativo de finanças pessoais **Finance Balance**, f
 
 ## 📱 Telas Desenvolvidas
 
-1. **Início / Dashboard:**
-   * Card de saldo total com toggle de visibilidade e rendimento CDI.
-   * Ações rápidas (*Pix*, *Pagar*, *Guardar*, *Fatura*) com modais interativos.
-   * Widget de cartão com limite disponível e atalho rápido.
-   * Resumo semanal em gráfico SVG com legenda para Débito & Pix e Crédito.
-   * Extrato dos últimos lançamentos.
+Protótipo navegável **sem back-end**: contas e dados ficam salvos no `localStorage` do navegador. Layout responsivo — navegação inferior no celular e sidebar a partir de 1024px.
 
-2. **Carteira de Cartões:**
-   * Alternador entre cartão virtual (Black) e físico (Platinum).
-   * Mockup do cartão com número mascarado, botão de copiar e validação de segurança.
-   * Ações rápidas: Bloquear/Desbloquear, Ver CVV e Ajustar Limite com slider interativo.
-   * Card de fatura com status e pagamento interativo.
-   * Histórico filtrado de compras no cartão.
+1. **Login / Cadastro:** criação de conta, login e acesso rápido com conta de demonstração (dados de exemplo).
+2. **Visão Geral (Dashboard):**
+   * Disponível no período (renda − realizado), com renda, previsto e realizado.
+   * Alocação por regra percentual (teto × previsto × realizado).
+   * Desvios do período e projeção de fechamento.
+   * Gastos por grupo (gráfico de rosca), gastos dos últimos 7 dias e últimos lançamentos.
+3. **Orçamento & Regras:** renda base e regras percentuais customizáveis (devem somar 100%), com distribuição automática da renda.
+4. **Estrutura de Despesas:** CRUD em árvore de Grupos › Itens › Subitens, cada nível com previsto × realizado e desvio.
+5. **Lançamentos:** registro, edição e exclusão de gastos classificados na árvore, com busca e filtro por grupo.
+6. **Perfil:** dados da conta, troca de senha, dia de início do período (ciclo financeiro definido pelo usuário) e gestão dos dados do protótipo.
 
-3. **Relatórios & Orçamento:**
-   * Navegador mensal e filtros de categoria.
-   * Resumo de gastos, economia do mês e média diária.
-   * Gráfico de rosca (*Donut Chart*) em SVG interativo por categoria.
-   * Card de IA com dicas financeiras personalizadas.
-   * Detalhamento de metas e tetos de gastos com barras de progresso.
+Os módulos **Metas** e **Investir** (simulador com API externa) aparecem como "em breve" e estão fora do escopo deste MVP.
 
 ## 🛠️ Como Executar
 
